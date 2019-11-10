@@ -1,0 +1,9 @@
+#mll_level {
+    background: rgba(255, 0, 0, .2);
+}
+#mll_level.night {
+    background: rgba(0, 0, 0, .2);
+}
+#mll_levelname {
+    text-align: center;
+}

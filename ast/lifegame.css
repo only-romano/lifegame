@@ -4,20 +4,27 @@ html, body {
     overflow: hidden;
 }
 
-#lifegame {
+#mll_wrapper, #mll_level {
     position: absolute;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
+}
+
+#mll_level {
     background: rgba(192, 192, 255, 0.4);
     transition: background 10s;
     z-index: 0;
 }
-#lifegame.night {
+#mll_level.night {
     background: rgba(0, 0, 32, 0.5);
 }
 
+#test_button {
+    position: relative;
+    z-index: 1;
+}
 
 
 .language-button {
