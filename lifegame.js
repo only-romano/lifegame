@@ -9,21 +9,26 @@ const store = new Vuex.Store({
         languageButtonClasses: { 'language-button': true, 'rus': false },
         player: {},
         level: {},
+        level_loading: false,
+        greeting: "Hello!",
     },
 
     mutations: {
-        changeLanguage: (state, language) => {
-            state.language = language ? 'EN' : 'RU';
+        changeLanguage: (state) => {
+            state.language = state.language === 'EN' ? 'RU' : 'EN';
         },
-        changeTitleText: (state, language) => {
-            state.titleText = language ? 'Little Life' : 'Маленькая Жизнь';
+        loadLevel: (state, value) => {
+            state.level_loading = value;
         },
-        languageButtonSwitchRusClass: (state, language) => {
-            state.languageButtonClasses.rus = !language;
+        setLevel: (state) => {
+            state.level = Level;
         },
-        loadLevel: (state) => {
-            state.level.stage = state.player.stage;
-            console.log(state.level.stage);
+        updateLanguage: (state) => {
+            let EN = state.language === 'EN';
+            state.titleText = EN ? 'Little Life' : 'Маленькая Жизнь';
+            state.languageButtonClasses.rus = !EN;
+            state.level.intro.now = EN ? state.level.intro.en : state.level.intro.ru;
+            state.greeting = EN ? "Hello!" : "Привет!";
         },
         updatePlayer: (state, obj) => {
             for (let key in obj) {
@@ -34,10 +39,8 @@ const store = new Vuex.Store({
 
     actions: {
         changeLanguage: ({commit, state}) => {
-            let language = state.language === 'RU';
-            commit('changeLanguage', language);
-            commit('changeTitleText', language);
-            commit('languageButtonSwitchRusClass', language);
+            commit('changeLanguage');
+            commit('updateLanguage');
         },
 
         loadPlayer: ({commit}) => new Promise((resolve, reject) => {
@@ -48,7 +51,21 @@ const store = new Vuex.Store({
             }, 10);
         }),
 
-        loadLevel: ({commit}) => commit('loadLevel'),
+        loadLevel: ({commit, state}) => {
+            new Promise((upper_resolve, upper_reject) => {
+                new Promise((lower_resolve, lower_reject) => {
+                    current_level_script.src = "levels/level" + state.player.stage + ".js";
+                    current_level_script.onload = () => lower_resolve();
+                }).then(()=>{
+                    commit('setLevel');
+                    upper_resolve();
+                })
+            }).then(() => {
+                current_level_style.innerHTML = state.level['css'];
+                commit('updateLanguage');
+                commit('loadLevel', true);
+            })
+        },
         night: () => lifegame.classList.toggle('night'),
     }
 })
@@ -60,15 +77,19 @@ const app = new Vue({
     store,
 
     computed: {
-        ...Vuex.mapState([
-            'language', 'titleText', 'languageButtonClasses',
-        ]),
+        ...Vuex.mapState({
+            language: 'language',
+            titleText: 'titleText',
+            LBC: 'languageButtonClasses',
+            greet: 'greeting',
+            levelName: (state) => state.level.intro && state.level.intro.now,
+        }),
     },
 
     watch: {
         titleText: (newTitleText) => {
             title.textContent = newTitleText;
-        }
+        },
     },
 
     methods: {
@@ -85,9 +106,11 @@ const app = new Vue({
 
     template:`
 <div id="lifegame">
-    <h2>{{titleText}}</h2>
-    <button :class='languageButtonClasses' @click='changeLanguage'>{{language}}</button>
+    <h2>{{levelName || greet}}</h2>
+    <button :class='LBC' @click='changeLanguage'>{{language}}</button>
     <button @click='night'>Night</button>
 </div>
 `
 })
+
+let Level = {};

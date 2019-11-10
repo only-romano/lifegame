@@ -12,6 +12,7 @@ html, body {
     right: 0;
     background: rgba(192, 192, 255, 0.4);
     transition: background 10s;
+    z-index: 0;
 }
 #lifegame.night {
     background: rgba(0, 0, 32, 0.5);
@@ -31,6 +32,7 @@ html, body {
     transition: all 0.5s;
     outline: none;
     background: rgba(0, 255, 128, .8);
+    z-index: 10;
 }
 .language-button:hover {
     opacity: 0.5;
