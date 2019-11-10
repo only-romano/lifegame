@@ -1,0 +1,43 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+#lifegame {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(192, 192, 255, 0.4);
+    transition: background 10s;
+}
+#lifegame.night {
+    background: rgba(0, 0, 32, 0.5);
+}
+
+
+
+.language-button {
+    position: absolute;
+    right: 1em;
+    top: 1em;
+    padding: 0.5em;
+    opacity: 0.2;
+    border: none;
+    border-radius: 0.5em;
+    font-size: 1.5em;
+    transition: all 0.5s;
+    outline: none;
+    background: rgba(0, 255, 128, .8);
+}
+.language-button:hover {
+    opacity: 0.5;
+    cursor: pointer;
+    transform: scale(1.02);
+}
+.language-button.rus {
+    color: white;
+    background: rgb(0, 128, 255);
+}
